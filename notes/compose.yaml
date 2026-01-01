@@ -1,0 +1,65 @@
+name: notes
+
+services:
+  notes:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    depends_on:
+      - notes-db
+      - notes-cache
+    env_file:
+      - .env.db.user
+    environment:
+      - MONGODB_HOST=notes-db
+      - MONGODB_PORT=27017
+      - REDIS_HOST=notes-cache
+      - REDIS_PORT=6379
+    # TODO: add a healthcheck for the notes service
+    networks:
+      - notes-net
+      - api-net
+  
+  notes-db:
+    image: mongodb/mongodb-community-server:7.0-ubi8
+    env_file:
+      - .env.db.root
+      - .env.db.user
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - type: bind
+        source: ./db-config/mongo-init.js
+        target: /docker-entrypoint-initdb.d/mongo-init.js
+        read_only: true
+      - type: volume
+        source: notes-data
+        target: /data/db
+    networks:
+      - notes-net
+  
+  notes-cache:
+    image: redis:8.4-alpine
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - type: volume
+        source: notes-cache-data
+        target: /data
+    networks:
+      - notes-net
+
+volumes:
+  notes-data:
+  notes-cache-data:
+
+networks:
+  notes-net:
+  api-net:

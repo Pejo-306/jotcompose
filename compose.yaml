@@ -1,0 +1,27 @@
+name: jotcompose
+
+include:
+  - notebooks/compose.yaml
+  - notes/compose.yaml
+
+services:
+  reverse-proxy:
+    image: nginx:1.29.4-alpine
+    ports:
+      - 8888:80
+    depends_on:
+      - notebooks
+      - notes
+    # TODO: add healthchecks to the reverse proxy
+    volumes:
+      - type: bind
+        source: ./nginx/nginx.conf
+        target: /etc/nginx/nginx.conf
+        read_only: true
+    networks:
+      - api-net
+    restart: unless-stopped
+    # TODO: add restart policies to all services
+
+networks:
+  api-net:

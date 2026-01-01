@@ -1,0 +1,46 @@
+name: notebooks
+
+services:
+  notebooks:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    depends_on:
+      - notebooks-db
+    env_file:
+      - .env.db.user
+    environment:
+      - MONGODB_HOST=notebooks-db
+      - MONGODB_PORT=27017
+    # TODO: add a healthcheck for the notebooks service
+    networks:
+      - notebooks-net
+      - api-net
+
+  notebooks-db:
+    image: mongodb/mongodb-community-server:7.0-ubi8
+    env_file:
+      - .env.db.root
+      - .env.db.user
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - type: bind
+        source: ./db-config/mongo-init.js
+        target: /docker-entrypoint-initdb.d/mongo-init.js
+        read_only: true
+      - type: volume
+        source: notebooks-data
+        target: /data/db
+    networks:
+      - notebooks-net
+
+volumes:
+  notebooks-data:
+
+networks:
+  notebooks-net:
+  api-net:
