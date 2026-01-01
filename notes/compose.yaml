@@ -16,9 +16,18 @@ services:
       - REDIS_HOST=notes-cache
       - REDIS_PORT=6379
     # TODO: add a healthcheck for the notes service
+    ports:
+      - 3002:3000
     networks:
       - notes-net
       - api-net
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+          ignore:
+            - node_modules
   
   notes-db:
     image: mongodb/mongodb-community-server:7.0-ubi8

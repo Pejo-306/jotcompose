@@ -13,9 +13,18 @@ services:
       - MONGODB_HOST=notebooks-db
       - MONGODB_PORT=27017
     # TODO: add a healthcheck for the notebooks service
+    ports:
+      - 3001:3000
     networks:
       - notebooks-net
       - api-net
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+          ignore:
+            - node_modules
 
   notebooks-db:
     image: mongodb/mongodb-community-server:7.0-ubi8
