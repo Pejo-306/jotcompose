@@ -118,10 +118,10 @@ The following is explicitly out-of-scope for this project:
 |------------------------------|--------------------------------|-------------|
 | **POST** `/api/notes`        | Create a note                  | <ul> <li>expects `title` and `content` in request body</li> <li>optionally receives `notebookId` in request body</li> <li>store note with provided `notebookId` on `notebooks` outage</li> <li>**201**: persist note</li> <li>**400**: if `title` or `content` not in request body</li> <li>**404**: if notebook with `notebookId` doesn't exist</li> </ul> |
 | **GET**  `/api/notes`        | Get all notes                  | <ul> <li>**200**: all notes</li> </ul> |
-| **GET**  `/api/notes/:id`    | Get a note                     | <ul> <li>**200**: note information</li> <li>**404**: if note with `:id` doesn't exist</li> </ul> |
-| **PUT**  `/api/notes/:id`    | Update a note                  | <ul> <li>**200**: updated note</li> <li>**404**: if note with `:id` doesn't exist</li> </ul> |
-| **DELETE**  `/api/notes/:id` | Delete a note                  | <ul> <li>**204**: note deleted</li> <li>**404**: if note with `:id` doesn't exist</li> </ul> |
-| **DELETE**  `/api/notes/`    | Delete all notes of a notebook | <ul> <li>**INTERNAL USE** only (see [DD-3](#dd-3-orphaned-notes))</li> <li>expects `notebookId` in request body</li> <li>**204**: notes deleted</li> <li>**404**: if `notebookId` isn't valid</li> </ul> |
+| **GET**  `/api/notes/:id`    | Get a note                     | <ul> <li>**200**: note information</li> <li>**400**: if `:id` not in request parameters</li> <li>**404**: if note with `:id` doesn't exist</li> </ul> |
+| **PUT**  `/api/notes/:id`    | Update a note                  | <ul> <li>**200**: updated note</li> <li>**400**: if `:id` not in request parameters</li> <li>**404**: if note with `:id` doesn't exist</li> </ul> |
+| **DELETE**  `/api/notes/:id` | Delete a note                  | <ul> <li>**204**: note deleted</li> <li>**400**: if `:id` not in request parameters</li> <li>**404**: if note with `:id` doesn't exist</li> </ul> |
+| **DELETE**  `/api/notes/`    | Delete all notes of a notebook | <ul> <li>**INTERNAL USE** only (see [DD-3](#dd-3-orphaned-notes))</li> <li>expects `notebookId` in request body</li> <li>**204**: notes deleted</li> <li>**400**: if `notebookId` not in request body</li> <li>**404**: if `notebookId` isn't valid</li> </ul> |
 | **GET**  `/health`           | Healthcheck                    | <ul> <li>**200**: with text **up**</li> </ul> |
 
 
