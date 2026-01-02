@@ -471,6 +471,8 @@ Explicitly reject DELETE requests with an HTTP `503` response.
 
 ### DD-6: `Notebook` and `Note` field limits
 
+TODO: separate this as DD-6 and have DD-7 capacity planning.
+
 How much do we limit the string length of `Notebook.name`, `Notebook.description`,
 `Note.title`, `Note.content`?
 

@@ -2,38 +2,46 @@ const mongoose = require("mongoose");
 
 const { Counter } = require("./counter");
 const { COUNTER_NAME } = require("../constants");
-const { generateNotebookId } = require("../utils/id-generator");
+const { generateNoteId } = require("../utils/id-generator");
 
-const notebookSchema = new mongoose.Schema({
+const noteSchema = new mongoose.Schema({
     _id: {
         type: String,
         required: true,
     },
-    name: {
+    title: {
         type: String,
-        required: true
+        required: true,
+        minlength: [1, "Title must not be empty"],
+        maxlength: [100, "Title must be less than 100 characters"]
     },
-    description: {
-        type: String
+    content: {
+        type: String,
+        required: true,
+        maxlength: [5000, "Content must be less than 5000 characters"]
+    },
+    notebookId: {
+        type: String,
     }
 }, {
     id: false,
     toJSON: {
         virtuals: true,
         transform: (_doc, ret) => {
-            delete ret._id;       // hide "_id"
+            delete ret._id;
             delete ret.__v;
             return ret;
         },
     },
-    toObject: { virtuals: true }
+    toObject: { virtuals: true },
+    versionKey: false
 });
 
-notebookSchema.virtual("id").get(function () {
+noteSchema.virtual("id").get(function () {
     return this._id;
 });
 
-notebookSchema.pre("validate", async function (next) {
+noteSchema.pre("validate", async function (next) {
     if (!this.isNew || this._id) return next();  // prevent re-generation of id
 
     try {
@@ -48,13 +56,13 @@ notebookSchema.pre("validate", async function (next) {
             }
         );
         const counter = counterDocument.value - 1;
-        this._id = generateNotebookId(counter);
+        this._id = generateNoteId(counter);
         return next();
     } catch (error) {
         return next(error);
     }
 });
 
-const Notebook = mongoose.model("Notebook", notebookSchema);
+const Note = mongoose.model("Note", noteSchema);
 
-module.exports = { Notebook };
+module.exports = { Note };

@@ -16,6 +16,7 @@ services:
       - MONGODB_PORT=27017
       - REDIS_HOST=notes-cache
       - REDIS_PORT=6379
+      - PORT=3000
     healthcheck:
       test: ["CMD", "node", "healthcheck.js"]
       interval: 10s
