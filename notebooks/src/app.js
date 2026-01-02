@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const express = require("express");
+const morgan = require("morgan");
 const bodyParser = require("body-parser");
 
 const { healthRouter } = require("./routes/health");
@@ -15,6 +16,7 @@ const notebookDb = process.env.NOTEBOOKS_DB;
 const mongoUri = `mongodb://${mongoHost}:${mongoPort}/${notebookDb}`;
 
 app.use(bodyParser.json());
+app.use(morgan("combined"));
 app.get("/", (_, res) => res.status(200).send("Hello from notebooks service!"));
 app.use("/health", healthRouter);
 app.use("/api/notebooks", notebooksRouter);

@@ -471,17 +471,33 @@ Explicitly reject DELETE requests with an HTTP `503` response.
 
 ### DD-6: `Notebook` and `Note` field limits
 
-TODO: separate this as DD-6 and have DD-7 capacity planning.
-
 How much do we limit the string length of `Notebook.name`, `Notebook.description`,
 `Note.title`, `Note.content`?
+
+Assume [A-4](#a-4-string-field-encoding) and [A-5](#a-5-conservative-string-fields-length).
 
 We want to limit the length of these fields, because a bad intentioned user can
 easily abuse and overflow our data stores.
 
-Assume [A-4](#a-4-string-field-encoding) and [A-5](#a-5-conservative-string-fields-length).
+For short fields like `Note.title` and `Notebook.name`, we expect to store `50`
+characters on average. We can easilly afford to double the max capacity of the
+field to `100`.
 
-What follows is capacity planning:
+For longer fields like `Note.content` and `Notebook.description`, giving a much
+larger capacity over the average would just open us to maliciously intentioned users.
+It's enough to provide ~20% more capacity.
+
+Field limits selected:
+- `Notebook.name`: 100
+- `Notebook.description`: 750
+- `Note.title`: 100
+- `Note.content`: 5000
+
+### DD-7: Capacity planning
+
+How much data do we expect to save in a year?
+
+Assume [A-4](#a-4-string-field-encoding) and [A-5](#a-5-conservative-string-fields-length).
 
 Ids are stored with:
 

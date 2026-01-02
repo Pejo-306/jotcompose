@@ -11,10 +11,13 @@ const notebookSchema = new mongoose.Schema({
     },
     name: {
         type: String,
-        required: true
+        required: true,
+        minlength: [1, "Name must not be empty"],
+        maxlength: [100, "Name must be less than 100 characters"]
     },
     description: {
-        type: String
+        type: String,
+        maxlength: [750, "Description must be less than 750 characters"]
     }
 }, {
     id: false,
