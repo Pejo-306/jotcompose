@@ -12,7 +12,12 @@ services:
     environment:
       - MONGODB_HOST=notebooks-db
       - MONGODB_PORT=27017
-    # TODO: add a healthcheck for the notebooks service
+      - PORT=3000  # TODO: move this to an .env file
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
       - 3001:3000
     networks:
