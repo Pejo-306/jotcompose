@@ -3,6 +3,7 @@ name: notes
 services:
   notes:
     build:
+      # TODO: change image name & use a multi-stage build
       context: .
       dockerfile: Dockerfile.dev
     depends_on:
@@ -15,7 +16,11 @@ services:
       - MONGODB_PORT=27017
       - REDIS_HOST=notes-cache
       - REDIS_PORT=6379
-    # TODO: add a healthcheck for the notes service
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
       - 3002:3000
     networks:
