@@ -133,7 +133,7 @@ The following is explicitly out-of-scope for this project:
 |--------------|------------|----------|----------------------|
 | `id`         | **string** | ✓        | <ul> <li>auto-generated</li> </ul> |
 | `name`       | **string** | ✓        |                      |
-| `description`| **text**   | ✗        |                      |
+| `description`| **string** | ✗        |                      |
 
 ---
 
@@ -143,7 +143,7 @@ The following is explicitly out-of-scope for this project:
 |--------------|------------|----------|----------------------|
 | `id`         | **string** | ✓        | <ul> <li>auto-generated</li> </ul> |
 | `title`      | **string** | ✓        |                      |
-| `content`    | **text**   | ✓        |                      |
+| `content`    | **string** | ✓        |                      |
 | `notebookId` | **string** | ✗        | <ul> <li>references `Notebook.id`</li> </ul> |
 
 

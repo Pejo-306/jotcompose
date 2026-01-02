@@ -13,6 +13,8 @@ services:
       - MONGODB_HOST=notebooks-db
       - MONGODB_PORT=27017
       - PORT=3000  # TODO: move this to an .env file
+      - NOTES_HOST=${NOTES_HOST}
+      - NOTES_PORT=${NOTES_PORT}
     healthcheck:
       test: ["CMD", "node", "healthcheck.js"]
       interval: 10s
