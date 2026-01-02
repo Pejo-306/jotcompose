@@ -105,9 +105,9 @@ The following is explicitly out-of-scope for this project:
 |----------------------------------|-------------------|-------------|
 | **POST** `/api/notebooks`        | Create a notebook | <ul> <li>expects `name` in request body</li>  <li>optionally receives `description` in request body</li> <li>**201**: persist notebook</li> <li>**400**: if `name` not in request body</li> </ul> |
 | **GET**  `/api/notebooks`        | Get all notebooks | <ul> <li>**200**: all notebooks</li> </ul> |
-| **GET**  `/api/notebooks/:id`    | Get a notebook    | <ul> <li>**200**: notebook information</li> <li>**404**: if notebook with `:id` doesn't exist</li> </ul> |
-| **PUT**  `/api/notebooks/:id`    | Update a notebook | <ul> <li>**200**: updated notebook</li> <li>**404**: if notebook with `:id` doesn't exist</li> </ul> |
-| **DELETE**  `/api/notebooks/:id` | Delete a notebook | <ul> <li>**204**: notebook deleted</li> <li>**404**: if notebook with `:id` doesn't exist</li> <li>**503**: temporary unavailability (see [DD-5](#dd-5-responses-to-microservices-outages))</li> </ul> |
+| **GET**  `/api/notebooks/:id`    | Get a notebook    | <ul> <li>**200**: notebook information</li> <li>**400**: if `:id` not in request parameters</li> <li>**404**: if notebook with `:id` doesn't exist</li> </ul> |
+| **PUT**  `/api/notebooks/:id`    | Update a notebook | <ul> <li>**200**: updated notebook</li> <li>**400**: if `:id` not in request parameters</li> <li>**404**: if notebook with `:id` doesn't exist</li> </ul> |
+| **DELETE**  `/api/notebooks/:id` | Delete a notebook | <ul> <li>**204**: notebook deleted</li> <li>**400**: if `:id` not in request parameters</li> <li>**404**: if notebook with `:id` doesn't exist</li> <li>**503**: temporary unavailability (see [DD-5](#dd-5-responses-to-microservices-outages))</li> </ul> |
 | **GET**  `/health`               | Healthcheck       | <ul> <li>**200**: with text **up**</li> </ul> |
 
 ---

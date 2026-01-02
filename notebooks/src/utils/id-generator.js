@@ -1,4 +1,5 @@
 const xxhash = require("xxhashjs");
+
 const { gcd } = require("./gcd");
 const { ALPHABET, BASE } = require("../constants");
 
