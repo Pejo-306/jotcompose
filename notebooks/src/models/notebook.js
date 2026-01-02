@@ -29,7 +29,8 @@ const notebookSchema = new mongoose.Schema({
             return ret;
         },
     },
-    toObject: { virtuals: true }
+    toObject: { virtuals: true },
+    versionKey: false
 });
 
 notebookSchema.virtual("id").get(function () {
