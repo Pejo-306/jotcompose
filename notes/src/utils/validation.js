@@ -160,7 +160,7 @@ async function getAllNotebooks(origin, endpoint = "/api/notebooks") {
  * @param {number} ttl - The TTL of the cache
  */
 async function refreshCache(redisClient, notebooks, ttl = 1) {
-    // SET fresh cache with notebooks and TTL to 5 seconds
+    // SET fresh cache with notebooks and TTL to 1 second
     // SET stale cache with notebooks
     const freshCacheKey = getFreshNotebooksCacheKey();
     const staleCacheKey = getStaleNotebooksCacheKey();

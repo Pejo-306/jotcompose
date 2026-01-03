@@ -255,7 +255,7 @@ in a queue. The queue is consumed by `notebooks` on "up".
 #### [ACCEPTED] Cache all notebook ids and validate against cache
 
 Add a 2-layer cache in `notes` with all notebook ids in a set:
-- **fresh set** which expires every 10s
+- **fresh set** which expires every 1s
 - **stale set** which never expires
 
 On **POST** `/api/notes` check `notebookId` against the cached **fresh** set. If
@@ -275,14 +275,14 @@ the **stale** set.
 - Speeds up **POST** `/api/notes` approx. 10-1000x since we avoid API calls to `notebooks`
 
 **Cons**
-- Introduces a 10s race condition window: user creates a notebook, but new notes
+- Introduces a 1s race condition window: user creates a notebook, but new notes
   can't be associated with the notebook within the race condition window (potentially
   leads to data loss).
 
 We handle the cons by:
 - Ensuring the freshness TTL is small enough to practically avoid race conditions
-  (e.g. 5-10s)
-- `notes` internally retries the validation after 10s (TTL) with the newest **fresh** set
+  (e.g. 1s)
+- `notes` internally retries the validation after 1s (TTL) with the newest **fresh** set
 
 **Accepted** because it ensures optimal `notes` behavior with minimal infrastructure additions.
 
