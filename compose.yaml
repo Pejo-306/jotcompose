@@ -9,10 +9,12 @@ services:
     image: nginx:1.29.4-alpine
     ports:
       - 8888:80
-    depends_on:
-      - notebooks
-      - notes
-    # TODO: add healthchecks to the reverse proxy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     volumes:
       - type: bind
         source: ./nginx/nginx.conf
@@ -21,7 +23,6 @@ services:
     networks:
       - api-net
     restart: unless-stopped
-    # TODO: add restart policies to all services
 
 networks:
   api-net:

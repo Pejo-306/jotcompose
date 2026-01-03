@@ -3,6 +3,7 @@ name: notebooks
 services:
   notebooks:
     build:
+      # TODO: change image name & use a multi-stage build
       context: .
       dockerfile: Dockerfile.dev
     depends_on:
@@ -13,7 +14,7 @@ services:
     environment:
       - MONGODB_HOST=notebooks-db
       - MONGODB_PORT=27017
-      - PORT=3000  # TODO: move this to an .env file
+      - PORT=3000
       - NOTES_HOST=${NOTES_HOST}
       - NOTES_PORT=${NOTES_PORT}
     healthcheck:
