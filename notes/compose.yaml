@@ -7,8 +7,10 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     depends_on:
-      - notes-db
-      - notes-cache
+      notes-db:
+        condition: service_healthy
+      notes-cache:
+        condition: service_healthy
     env_file:
       - .env.db.user
     environment:

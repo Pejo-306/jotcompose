@@ -1,8 +1,14 @@
 const express = require("express");
 
 const { Note } = require("../models/note");
+const { ValidationError } = require("../errors");
+const { validateNotebook } = require("../utils/validation");
+const { retry } = require("../utils/retry");
 
 const notesRouter = express.Router();
+const notebooksHost = process.env.NOTEBOOKS_HOST;
+const notebooksPort = process.env.NOTEBOOKS_PORT;
+const notebooksOrigin = `http://${notebooksHost}:${notebooksPort}`;
 
 notesRouter.post("/", async (req, res) => {
     const { title, content, notebookId } = req.body || {};
@@ -10,10 +16,43 @@ notesRouter.post("/", async (req, res) => {
     if (!title || !content) {
         return res.status(400).send({ error: "Title and content are required" });
     }
+    if (notebookId === "") {
+        return res.status(400).send({ error: "Notebook id cannot be empty" });
+    }
 
     try {
-        const note = new Note({ title, content, notebookId });
-        // TODO: validate notebookId against notebook cache and service
+        let fields = { title, content };
+
+        if (notebookId) {
+            // Retry notebook validation twice to avoid cache staleness race
+            // conditions and connection hiccups
+            // (see system-design.md#dd-2-notes-behavior-on-notebooks-outage for more details)
+            let isValidNotebook = false;
+            try {
+                await retry(
+                    async () => {
+                        const validationResult = await validateNotebook(notebookId, notebooksOrigin);
+                        if (validationResult === false) {
+                            throw new ValidationError("Trying to validate notebook again after 5s");
+                        }
+                        isValidNotebook = true;
+                    }, 
+                    1,
+                    1000  // 1 second
+                );
+            } catch (error) {
+                if (!(error instanceof ValidationError)) {
+                    throw error;
+                }
+            }
+
+            if (!isValidNotebook) {
+                return res.status(404).send({ error: `Notebook with id ${notebookId} is not valid` });
+            }
+            fields.notebookId = notebookId;
+        }
+
+        const note = new Note(fields);
         await note.save();
         res.status(201).send(note.toJSON());
     } catch (error) {

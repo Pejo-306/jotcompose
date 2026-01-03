@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 
 const { healthRouter } = require("./routes/health");
 const { notesRouter } = require("./routes/notes");
+const { openRedisClient, closeRedisClient } = require("./utils/redis");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -14,6 +15,9 @@ const noteUser = process.env.NOTES_USER;
 const notePass = process.env.NOTES_PASS;
 const noteDb = process.env.NOTES_DB;
 const mongoUri = `mongodb://${mongoHost}:${mongoPort}/${noteDb}`;
+const redisHost = process.env.REDIS_HOST;
+const redisPort = process.env.REDIS_PORT;
+const redisUri = `redis://${redisHost}:${redisPort}`;
 
 app.use(bodyParser.json());
 app.use(morgan("combined"));
@@ -28,13 +32,18 @@ mongoose.connect(mongoUri, {
     },
     connectTimeoutMS: 1000,
 })
+.then(async () => {
+    const redisClient = await openRedisClient();
+    console.log(`Connected to Redis at ${redisUri}`);
+    await closeRedisClient(redisClient);
+})
 .then(() => {
+    console.log(`Connected to MongoDB at ${mongoUri}`);
     app.listen(port, () => {
         console.log(`Notes service is running on port ${port}`);
     });
-    console.log(`Connected to MongoDB at ${mongoUri}`);
 })
 .catch((err) => {
-    console.error("Error connecting to MongoDB", err);
+    console.error("Error connecting to services", err);
     process.exit(1);
-});
+})

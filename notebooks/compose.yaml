@@ -6,7 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     depends_on:
-      - notebooks-db
+      notebooks-db:
+        condition: service_healthy
     env_file:
       - .env.db.user
     environment:
