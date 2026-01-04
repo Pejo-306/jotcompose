@@ -53,8 +53,7 @@ Clone the repo and `up` the Compose stack.
 Run the setup script.
 
 ```bash
-chmod +x scripts/setup.sh
-bash scripts/setup.sh
+make setup
 ```
 
 This will create `.env` files with necessary environment variables. You may keep
@@ -63,11 +62,18 @@ the default values - the Compose stack will work with them.
 UP the Compose stack.
 
 ```bash
-docker compose up -d
+make up
+```
+
+Or in DEV mode (each microservice has an exposed port + hot reload on code changes):
+```bash
+make dev
 ```
 
 **NOTE**: Ports used on your host machine:
 - `nginx` on port **8888**
+- `notebooks` on port **3001** (only in DEV mode)
+- `notes` on port **3002** (only in DEV mode)
 
 Edit [compose.yaml](compose.yaml) if the listed ports are already in use.
 
@@ -86,8 +92,7 @@ curl http://localhost:8888/health/notebooks -v
 You may seed some sample service data via:
 
 ```bash
-chmod +x scripts/seed.sh
-bash scripts/seed.sh
+make seed
 ```
 
 ### Load test
@@ -96,8 +101,7 @@ bash scripts/seed.sh
 operations to the service:
 
 ```bash
-chmod +x scripts/load_test.sh
-bash scripts/load_test.sh
+make load_test
 ```
 
 **WARNING**: the following script WILL overload the service and may overload your
@@ -105,7 +109,7 @@ host machine as well. Ensure you have at least 2 Gb of free RAM and 2 CPU cores
 before running this command:
 
 ```bash
-CONCURRENT_REQUESTS=100 NOTEBOOKS_TO_CREATE=500 NOTES_TO_CREATE=20000 GET_REQUESTS=10000 PUT_REQUESTS=5000 ./scripts/load_test.sh
+CONCURRENT_REQUESTS=100 NOTEBOOKS_TO_CREATE=500 NOTES_TO_CREATE=20000 GET_REQUESTS=10000 PUT_REQUESTS=5000 make load_test
 ```
 
 ## Built With
