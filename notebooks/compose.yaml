@@ -3,9 +3,9 @@ name: notebooks
 services:
   notebooks:
     build:
-      # TODO: change image name & use a multi-stage build
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
+    image: ${NOTEBOOKS_IMAGE_DOMAIN:-notebooks}/notebooks:latest
     depends_on:
       notebooks-db:
         condition: service_healthy
@@ -14,26 +14,16 @@ services:
     environment:
       - MONGODB_HOST=notebooks-db
       - MONGODB_PORT=27017
-      - PORT=3000
       - NOTES_HOST=${NOTES_HOST}
       - NOTES_PORT=${NOTES_PORT}
     healthcheck:
-      test: ["CMD", "node", "healthcheck.js"]
+      test: ["CMD", "/nodejs/bin/node", "/app/healthcheck.js"]
       interval: 10s
       timeout: 5s
       retries: 5
-    ports:
-      - 3001:3000
     networks:
       - notebooks-net
       - api-net
-    develop:
-      watch:
-        - action: sync
-          path: ./src
-          target: /app/src
-          ignore:
-            - node_modules
 
   notebooks-db:
     image: mongodb/mongodb-community-server:7.0-ubi8

@@ -1,0 +1,17 @@
+services:
+  notes:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: ${NOTES_IMAGE_DOMAIN:-notes}/notes:dev
+    ports:
+      - ${NOTES_DEV_PORT:-3002}:3000
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+          ignore:
+            - node_modules

@@ -10,6 +10,20 @@ cd "$SCRIPT_DIR"
 
 echo "Setting up notebooks microservice environment files..."
 
+# .env
+if [ ! -f .env ]; then
+    if [ -f .env.example ]; then
+        cp .env.example .env
+        echo "✓ Created .env from .env.example"
+        echo "  Please edit .env with your desired image domain/ports"
+    else
+        echo "✗ Error: .env.example not found"
+        exit 1
+    fi
+else
+    echo "✓ .env already exists, skipping"
+fi
+
 # .env.db.user
 if [ ! -f .env.db.user ]; then
     if [ -f .env.db.user.example ]; then

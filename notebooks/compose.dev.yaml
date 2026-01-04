@@ -1,0 +1,17 @@
+services:
+  notebooks:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: ${NOTEBOOKS_IMAGE_DOMAIN:-notebooks}/notebooks:dev
+    ports:
+      - ${NOTEBOOKS_DEV_PORT:-3001}:3000
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+          ignore:
+            - node_modules

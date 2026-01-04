@@ -3,9 +3,9 @@ name: notes
 services:
   notes:
     build:
-      # TODO: change image name & use a multi-stage build
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
+    image: ${NOTES_IMAGE_DOMAIN:-notes}/notes:latest
     depends_on:
       notes-db:
         condition: service_healthy
@@ -18,26 +18,16 @@ services:
       - MONGODB_PORT=27017
       - REDIS_HOST=notes-cache
       - REDIS_PORT=6379
-      - PORT=3000
       - NOTEBOOKS_HOST=${NOTEBOOKS_HOST}
       - NOTEBOOKS_PORT=${NOTEBOOKS_PORT}
     healthcheck:
-      test: ["CMD", "node", "healthcheck.js"]
+      test: ["CMD", "/nodejs/bin/node", "/app/healthcheck.js"]
       interval: 10s
       timeout: 5s
       retries: 5
-    ports:
-      - 3002:3000
     networks:
       - notes-net
       - api-net
-    develop:
-      watch:
-        - action: sync
-          path: ./src
-          target: /app/src
-          ignore:
-            - node_modules
   
   notes-db:
     image: mongodb/mongodb-community-server:7.0-ubi8
